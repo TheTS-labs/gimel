@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Token Display</title>
+    <style>
+        :root {
+            --md-sys-color-primary: #bb86fc;
+            --md-sys-color-on-primary: #000000;
+            --md-sys-color-surface: #121212;
+            --md-sys-color-on-surface: #ffffff;
+            --md-sys-color-background: #121212;
+            --md-sys-color-on-background: #ffffff;
+            --md-sys-elevation-level1: 0px 1px 3px rgba(0, 0, 0, 0.12), 0px 1px 2px rgba(0, 0, 0, 0.24);
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--md-sys-color-background);
+            color: var(--md-sys-color-on-background);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .header {
+            font-size: 2.5rem; /* Font size for "Gimel" */
+            color: var(--md-sys-color-primary);
+            margin-bottom: 20px; /* Spacing between header and container */
+            position: absolute;
+            top: 20px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .container {
+            background-color: var(--md-sys-color-surface);
+            color: var(--md-sys-color-on-surface);
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: var(--md-sys-elevation-level1);
+            text-align: center;
+            position: relative;
+            font-size: 2rem; /* Increased text size by 200% */
+        }
+
+        .token {
+            color: var(--md-sys-color-primary);
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .tooltip {
+            visibility: hidden;
+            width: 120px;
+            background-color: var(--md-sys-color-on-surface);
+            color: var(--md-sys-color-surface);
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%; /* Position the tooltip above the token */
+            left: 50%;
+            margin-left: -60px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.75rem; /* Smaller font size for tooltip */
+        }
+
+        .tooltip::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: var(--md-sys-color-on-surface) transparent transparent transparent;
+        }
+
+        .token:hover .tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .copied-message {
+            display: none;
+            margin-top: 10px;
+            color: var(--md-sys-color-primary);
+            font-weight: 500;
+            font-size: 1.5rem; /* Increased font size for copied message */
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="header">Gimel</div>
+    <div class="container">
+        <p>Your token is <span class="token" id="token">loading...<span class="tooltip" id="tooltip">Click to copy</span></span></p>
+        <p class="copied-message" id="copiedMessage">Token copied!</p>
+    </div>
+    <script>
+        function getTokenFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('token');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = getTokenFromUrl();
+            const tokenElement = document.getElementById('token');
+            const tooltip = document.getElementById('tooltip');
+            const copiedMessage = document.getElementById('copiedMessage');
+            tokenElement.textContent = token ? token : 'not provided';
+
+            if (token) {
+                tokenElement.addEventListener('click', () => {
+                    navigator.clipboard.writeText(token).then(() => {
+                        tooltip.style.visibility = 'hidden';
+                        copiedMessage.style.display = 'block';
+                        setTimeout(() => {
+                            copiedMessage.style.display = 'none';
+                        }, 2000);
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
